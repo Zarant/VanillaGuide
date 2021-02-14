@@ -1,35 +1,13 @@
-VanillaGuide
+Overview
 ============
-VanillaGuide aim to cover the hole for an in-game guide for Vanilla WoW. The AddOn features:
+* This is a rough port of my own leveling guide into the VanillaGuide framework for Vanilla WoW (1.12)
 
-* Step-by-Step Zone Guides (from Joana and Brian Kopps work)
-* Hints and Tips for various Quests
-* [MetaMapBWP](https://github.com/laytya/Metamap-vanilla) Integration
-* [TomTom Vanilla](https://github.com/cralor/TomTomVanilla) Integration
+* You can install [Guide Creator](https://github.com/Zarant/GuideCreator/tree/classic) to enable automatic step completion
 
-> **NOTE:**
->
-> - This Addon is developed for WoW 1.12.1 (toc 11200), also known as Vanilla WoW 
->
+* I highly recommend using this with [TomTom](https://github.com/cralor/TomTomVanilla) to generate accurate waypoints
 
-Credits
-=======
-Well, thank you Joana/Mancow, you ruined my life with WoW, but I love you anyway.
+* I only imported my Night Elf Hunter route so far, this is an experimental version it's full of bugs and stuff to do
 
-and here're the links to the REAL guide:
+* Since I don't play this version of the game anymore, don't expect any updates
 
-    http://www.joanasworld.com/meet_joana_mancow.html
-    http://www.joanasworld.com/azeroth.htm
-    http://www.joanasworld.com/Joanas1-60Guide.pdf
-
-Donations
-=========
-If you would like to support this project, you may donate to our development fund via Paypal.
-
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LSR84M2ZJEPJS)
-
-Any funds donated will be used to help further development on this project, by purchasing equipment, etc.
-
-We are always looking for more volunteers to help with coding, customizations, etc, so feel free to contact us.
-
-Thank you.
+* If you want to convert more guidelime guides yourself, check out the [VGuideExport](https://github.com/Zarant/Guidelime_Zarant/tree/VGuideExport) branch
