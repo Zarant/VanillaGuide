@@ -10,21 +10,25 @@
    <Binding name="VGUIDE_PREV_STEP" description="Go to the Prev Step">
       <!-- VGuide:PrevStep() -->
       VGuide.Display:PrevStep(true)
+	  VGuide.UI.fMain:LoadStepData()
       VGuide.UI.fMain:RefreshData()
    </Binding>
    <Binding name="VGUIDE_NEXT_STEP" description="Go to the Next Step">
       <!-- VGuide:NextStep() -->
       VGuide.Display:NextStep()
+	  VGuide.UI.fMain:LoadStepData()
       VGuide.UI.fMain:RefreshData()
    </Binding>
    <Binding name="VGUIDE_PREV_GUIDE" description="Go to the Prev Guide">
       <!-- VGuide:PrevGuide() -->
       VGuide.Display:PrevGuide()
+	  VGuide.UI.fMain:LoadStepData()
       VGuide.UI.fMain:RefreshData()
    </Binding>
    <Binding name="VGUIDE_NEXT_GUIDE" description="Go to the Next Guide">
       <!-- VGuide:NextGuide() -->
       VGuide.Display:NextGuide()
+	  VGuide.UI.fMain:LoadStepData()
       VGuide.UI.fMain:RefreshData()
    </Binding>
 

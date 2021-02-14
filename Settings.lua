@@ -46,21 +46,21 @@ function objSettings:new()
 			Locked = false,
 			StepFrameVisible = true,
 			ScrollFrameVisible = true,
-			StepScroll = 0.33,
+			StepScroll = 0.4,
 			MinimapToggle = true,
 			MinimapPos = 0,
 			Opacity = 1,
-			Scale = 1,
-			Layer = "HIGH",
+			Scale = 0.6,
+			Layer = "LOW",
 			MainFrameSize = {
 				nWidth = 320,
-				nHeight = 320,
+				nHeight = 390,
 			},
 			MainFrameAnchor = {
-				sFrom = "CENTER",
-				sTo = "CENTER",
+				sFrom = "TOPLEFT",
+				sTo = "TOPLEFT",
 				nX = 0,
-				nY = 0,
+				nY = -250,
 			},
 			MainFrameColor = {
 				nR = .11,
@@ -69,16 +69,16 @@ function objSettings:new()
 				nA = .81,
 			},
 			StepFrameColor = {
-				nR = .11,
-				nG = .11,
-				nB = .41,
-				nA = .71,
+				nR = 0,
+				nG = 0,
+				nB = 0,
+				nA = 0,
 			},
 			ScrollFrameColor = {
-				nR = .41,
+				nR = .63,
 				nG = .11,
 				nB = .11,
-				nA = .71,
+				nA = .1,
 			},
 			StepFrameTextColor = {
 				nR = .91,
@@ -101,11 +101,11 @@ function objSettings:new()
 			Faction = "Unknown",	--Faction,
 		},
 		GuideValues = {
-			GuideID = 1,
+			GuideID = 2,
 			Step = 1,
 		},
 		VGuideFu = {
-			ShowTitle = true,
+			ShowTitle = false,
 			ShowGuideName = false,
 			ShowGuideStep = false,
 			ShowLabels = true,
@@ -117,7 +117,7 @@ function objSettings:new()
 			NotesEnable = false,
 			BWPEnable = false,
 		},
-		TomTomToggle = false,
+		TomTomToggle = true,
 	}
 
 	obj = AceLibrary("AceAddon-2.0"):new("AceDB-2.0")

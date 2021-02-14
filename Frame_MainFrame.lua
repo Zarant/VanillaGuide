@@ -42,7 +42,7 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 	fParent = fParent or nil
 	local obj = {}
 	setmetatable(obj, self)
-
+	obj.stepPos = {}
 	local tUI = oSettings:GetSettingsUI()
 
 	local function Render_MF(fParent, sName, tTexture, tUI)
@@ -198,7 +198,7 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 	end
 	local function Render_MFTitle(fParent, sName)
 		local version = GetAddOnMetadata("VanillaGuide", "Version")
-		local fs = fParent:CreateFontString(sName, "ARTWORK", "GameFontNormalSmall")
+		local fs = fParent:CreateFontString(sName, "ARTWORK", "GameFontNormal")
 		fs:SetPoint("TOPLEFT", fParent, "TOPLEFT", 31, -6)
 		fs:SetTextColor(.91, .79, .11, 1)
 		fs:SetJustifyH("CENTER")
@@ -225,7 +225,7 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 		return frame
 	end
 	local function Render_MFStepNumberLabel(fParent, sName)
-		local fs = fParent:CreateFontString(sName, "ARTWORK", "GameFontNormalSmall")
+		local fs = fParent:CreateFontString(sName, "ARTWORK", "GameFontNormal")
 		fs:SetPoint("CENTER", fParent, "CENTER", 0, 0)
 		fs:SetTextColor(.71, .71, .71, 1)
 		fs:SetJustifyH("CENTER")
@@ -251,7 +251,7 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 		return frame
 	end
 	local function Render_MFDropDownMenuZoneLabel(fParent, sName)
-		local fs = fParent:CreateFontString(sName, "ARTWORK", "GameFontNormalSmall")
+		local fs = fParent:CreateFontString(sName, "ARTWORK", "GameFontNormal")
 		fs:SetTextColor(.91, .91, .91, 1)
 		fs:SetJustifyH("CENTER")
 		fs:SetJustifyV("CENTER")
@@ -280,7 +280,7 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 	end
 	local function Render_MFStepLabel(fParent, sName, tUI)
 		local tColor = tUI.StepFrameTextColor
-		local fs = fParent:CreateFontString(sName, "ARTWORK", "GameFontNormalSmall")
+		local fs = fParent:CreateFontString(sName, "ARTWORK", "GameFontNormal")
 		fs:SetPoint("TOPLEFT", fParent, "TOPLEFT", 5, -5)
 		fs:SetPoint("BOTTOMRIGHT", fParent, "BOTTOMRIGHT", -5, 5)
 		fs:SetTextColor(tColor.nR, tColor.nG, tColor.nB, tColor.nA)
@@ -543,22 +543,26 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 		obj.tWidgets.button_PrevGuideButton:SetScript("OnClick", function()
 			--Dv("     --- Prev Guide ---")
 			oDisplay:PrevGuide()
+			obj:LoadStepData()
 			obj:RefreshData()
 		end)
 		obj.tWidgets.button_NextGuideButton:SetScript("OnClick", function()
 			--Dv("     --- Next Guide ---")
 			oDisplay:NextGuide()
+			obj:LoadStepData()
 			obj:RefreshData()
 		end)
 	-- Prev and Next Step Buttons
 		obj.tWidgets.button_PrevStepButton:SetScript("OnClick", function()
 			--Dv("     --- Prev Step ---")
 			oDisplay:PrevStep()
+			obj:LoadStepData()
 			obj:RefreshData()
 		end)
 		obj.tWidgets.button_NextStepButton:SetScript("OnClick", function()
 			--Dv("     --- Next Step ---")
 			oDisplay:NextStep()
+			obj:LoadStepData()
 			obj:RefreshData()
 		end)
 	-- DropDown Menu
@@ -626,7 +630,7 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 			    local tx = tonumber(strsub(this:GetName(), 11))
 				this:SetTextColor(tColT.nR, tColT.nG, tColT.nB, tColT.nA)
 				if tx == step then
-					this:SetBackdropColor(tColF.nR, tColF.nG, tColF.nB, tColF.nA)
+					this:SetBackdropColor(tColF.nR, tColF.nG, tColF.nB, 0.66)
 				else
 					this:SetBackdropColor(.1, .1, .1, .5)
 				end
@@ -679,9 +683,15 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 			for k,v in ipairs(tEntries) do
 				fs:SetText(tEntries[k])
 				tEntries.textWidth[k] = fs:GetWidth()
-				local val = math.floor((tEntries.textWidth[k]) / (nWidth))
-				tEntries.textHeight[k] = (val + 1) * tTexture.FONT_HEIGHT + 5
+				local rawtext = string.gsub(tEntries[k],"|c%w%w%w%w%w%w%w%w","")
+				local nlines = 0
+				for w in string.gfind(rawtext, "[^\n]+") do
+					local height = math.ceil(strlen(w)*5/(nWidth-20))
+					nlines = nlines + height
+				end
+				tEntries.textHeight[k] = (nlines) * tTexture.FONT_HEIGHT + 5
 				tHeight = tHeight + tEntries.textHeight[k] + tTexture.SCROLLFRAME_PADDING
+				obj.stepPos[k] = tHeight
 			end
 			return tHeight, tEntries
 		end
@@ -726,7 +736,7 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 			fSlider:SetMinMaxValues(0, 0)
 			fSlider:SetValue(0)
 			fSlider:Hide()
-			fScroll:SetPoint("BOTTOMRIGHT", fMain, "BOTTOMRIGHT", -5, 27)
+			fScroll:SetPoint("BOTTOMRIGHT", fMain, "BOTTOMRIGHT", -25, 27)
 			sliderVisible = false
 			shWidth = mainFrameWidth - 40 + 20
 		end
@@ -739,8 +749,12 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 		for k, v in pairs(fChild.Entries) do
 			if k <= oDisplay:GetCurrentStepCount() then
 				if not sliderVisible then
-					local val = math.floor(t.textWidth[k] / (scrollFrameWidth + 20))
-					t.textHeight[k] = (val+1) * tTexture.FONT_HEIGHT + 5
+										
+					t.textHeight[k] = math.floor(t.textHeight[k] * (scrollFrameWidth-20) / (scrollFrameWidth + 20))
+					--t.textHeight[k] = (val+1) * tTexture.FONT_HEIGHT + 5
+					
+					
+					
 				end
 				totalHeight = totalHeight + t.textHeight[k] + tTexture.SCROLLFRAME_PADDING
 				v:SetWidth(shWidth)
@@ -751,7 +765,7 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 				v.textHeight = t.textHeight[k]
 				v.textWidth = t.textWidth[k]
 				if k == oDisplay:GetCurrentStep() then
-					v:SetBackdropColor(tColF.nR, tColF.nG, tColF.nB, tColF.nA)
+					v:SetBackdropColor(tColF.nR, tColF.nG, tColF.nB, 0.66)
 				else
 					v:SetBackdropColor(.1, .1, .1, .5)
 				end
@@ -764,7 +778,41 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 		fChild:SetHeight(totalHeight)
 		fScroll:UpdateScrollChildRect()
 	end
-
+	
+	obj.unitscanTarget = nil
+	obj.LoadStepData = function(self)
+		local t = oDisplay:GetCurrentStepInfo()
+		QAlist = t.QA
+		QTlist = t.QT
+		QClist = t.QC
+		stepType = t.typ
+		
+		if unitscan_targets then	
+			if obj.unitscanTarget then
+				unitscan_targets[obj.unitscanTarget] = nil
+				DEFAULT_CHAT_FRAME:AddMessage(LIGHTYELLOW_FONT_COLOR_CODE .. '<unitscan> -' .. obj.unitscanTarget)
+				obj.unitscanTargets = nil
+			end
+			if t.unitscan then
+				obj.unitscanTarget = strupper(t.unitscan)
+				unitscan_targets[obj.unitscanTarget] = true
+				DEFAULT_CHAT_FRAME:AddMessage(LIGHTYELLOW_FONT_COLOR_CODE .. '<unitscan> +' .. obj.unitscanTarget)
+			else
+				obj.unitscanTarget = nil
+			end
+		end
+		
+		local stepIndex = oDisplay.CurrentStep
+		local height = 0
+		if stepIndex > 1 then	
+			height = obj.stepPos[stepIndex-1]+4
+		end
+		local fScroll = getglobal("VG_MainFrame_ScrollFrame")
+		fScroll:SetVerticalScroll(height)
+		obj.tWidgets.slider_ScrollFrameSlider:SetValue(height)
+		--obj:RefreshData()
+	end
+	
 	obj.RefreshMetaMap = function(self)
 		local tMetaMap = oSettings:GetSettingsMetaMap()
 		-- mode can be:
@@ -787,6 +835,19 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 				mode = nil
 			end
 
+			local zoneName = t.zone
+			local creator = "VanillaGuide"
+			local continent, setZone = MetaMap_NameToZoneID(zoneName);
+			for zone, zoneTable in pairs(MetaMapNotes_Data[continent]) do
+				for id=MetaMap_TableSize(zoneTable), 1, -1 do
+					if(setZone == 0 and zoneTable[id] ~= nil and creator == zoneTable[id].creator) then
+						MetaMapNotes_DeleteNote(id, continent, zone);
+					elseif(setZone == zone and zoneTable[id] ~= nil and creator == zoneTable[id].creator) then
+						MetaMapNotes_DeleteNote(id, continent, zone);
+					end
+				end
+			end
+			
 			local title = oDisplay:GetGuideTitle()
 			local step = oDisplay:GetCurrentStep()
 			local label = oDisplay:GetStepLabel()
@@ -800,7 +861,11 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 		if TomTom and oSettings:GetSettingsTomTom() then
 			local t = oDisplay:GetCurrentStepInfo()
 			if t.x and t.y and t.zone then
-				local continent, zone = TomTom:GetZoneInfo(TomTom:CleanZoneName(t.zone))
+				local zonetext = t.zone
+				if t.zone == "Stormwind City" or t.zone == "StormwindCity" then
+					zonetext = "Stormwind"
+				end
+				local continent, zone = TomTom:GetZoneInfo(TomTom:CleanZoneName(zonetext))
 				local options = { title = string.format("[VG] %s (step %d/%d)", oDisplay:GetGuideTitle(), oDisplay:GetCurrentStep(), oDisplay:GetCurrentStepCount()) }
 				if waypoint ~= nil then
 					TomTom:RemoveWaypoint(waypoint)
@@ -917,6 +982,12 @@ function objMainFrame:new(fParent, tTexture, oSettings, oDisplay)
 		-- 3 = Notes & BWP Enabled
 		if nX and nY and sZone and MetaMap_GetCurrentMapInfo then
 			local continent, zone, _, mapName = MetaMap_GetCurrentMapInfo()
+			if sZone ~= mapName then
+				continent, zone = MetaMap_NameToZoneID(sZone);
+				if zone then
+					mapName = sZone
+				end
+			end
 			local normX = nX/100
 			local normY = nY/100
 			if mode == 2 or mode == 3 then

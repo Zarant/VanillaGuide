@@ -77,6 +77,11 @@ function objDisplay:new(oSettings, oGuideTables)
 			obj.StepInfoDisplay[k].x = v.x or nil
 			obj.StepInfoDisplay[k].y = v.y or nil
 			obj.StepInfoDisplay[k].zone = v.zone or nil
+			obj.StepInfoDisplay[k].QA = v.QA or nil
+			obj.StepInfoDisplay[k].QT = v.QT or nil
+			obj.StepInfoDisplay[k].QC = v.QC or nil
+			obj.StepInfoDisplay[k].typ = v.typ or nil
+			obj.StepInfoDisplay[k].unitscan = v.unitscan or nil
 		end
 		obj.CurrentStepCount = count
 		obj:UpdateGuideValuesSettings()

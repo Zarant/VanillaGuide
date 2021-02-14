@@ -13,7 +13,7 @@
 ## X-Email: rsheep@gmail.com
 ## X-Website: http://vanillaguide.googlecode.com
 ## X-Embeds: Ace2, FuBar-Plugin-2.0, Tablet-2.0
-## OptionalDeps: Ace2, FuBar, Tablet-2.0, MetaMap, TomTom
+## OptionalDeps: Ace2, FuBar, Tablet-2.0, MetaMap, TomTom, unitscan, GuideCreator
 
 ## SavedVariables: VanillaGuideDB
 ## SavedVariablesPerCharacter: VanillaGuideDBPC
