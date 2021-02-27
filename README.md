@@ -10,4 +10,4 @@ Overview
 
 * Since I don't play this version of the game anymore, don't expect any updates
 
-* If you want to convert more guidelime guides yourself, check out the [VGuideExport](https://github.com/Zarant/Guidelime_Zarant/tree/VGuideExport) branch
+* If you want to convert more guidelime guides yourself, check out the [VGuideExport](https://github.com/Zarant/Guidelime_Zarant/blob/e48fb1bbc00e9632edb005510fa76970e85a72d7/Guidelime_Zarant.lua#L1158) branch
